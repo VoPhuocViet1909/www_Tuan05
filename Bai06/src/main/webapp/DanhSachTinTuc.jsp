@@ -23,6 +23,7 @@
             <th>Tiêu đề</th>
             <th>Nội dung</th>
             <th>Liên kết</th>
+            <th>Hành động</th>
         </tr>
         </thead>
         <tbody>
@@ -32,11 +33,16 @@
                 <td>${tt.tieuDe}</td>
                 <td>${tt.noiDungTT}</td>
                 <td><a href="${tt.lienKet}" target="_blank">${tt.lienKet}</a></td>
+                <td>    <a href="danh-sach-tin-tuc?action=delete&matt=${tt.maTT}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa tin này?');">
+                    Xóa
+                </a></td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
-    <a href="TinTucForm.jsp" class="btn btn-success">Thêm tin tức</a>
+    <a href="danh-sach-tin-tuc?action=new" class="btn btn-success">Thêm tin tức</a>
 </div>
 </body>
 </html>

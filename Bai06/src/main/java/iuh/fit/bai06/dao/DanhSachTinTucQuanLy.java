@@ -77,7 +77,9 @@ public class DanhSachTinTucQuanLy {
             while (rs.next()) {
                 list.add(new DanhMuc(
                         rs.getInt("MADM"),
-                        rs.getString("TENDANHMUC")
+                        rs.getString("TENDANHMUC"),
+                        rs.getString("NGUOIQUANLY"),
+                        rs.getString("GHICHU")
                 ));
             }
         } catch (Exception e) {
