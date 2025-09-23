@@ -21,13 +21,14 @@ public class DanhSachTinTucServlet extends HttpServlet {
     @Resource(name = "jdbc/quanlydanhmuc")
     private DataSource dataSource;
     private DanhSachTinTucQuanLy dsDAO;
+    private  DanhMucDAO dmDAO;
 
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         try {
             dsDAO = new DanhSachTinTucQuanLy(dataSource);
-
+            dmDAO = new DanhMucDAO(dataSource);
         } catch (Exception e) {
             throw new RuntimeException("Error initializing DAOs", e);
         }
@@ -36,11 +37,40 @@ public class DanhSachTinTucServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String madmStr = req.getParameter("madm");
-        int madm = madmStr != null ? Integer.parseInt(madmStr) : 1;
-        List<TinTuc> list = dsDAO.getTinTucByDanhMuc(madm);
-        req.setAttribute("danhSachTinTuc", list);
-        req.setAttribute("danhMucList", dsDAO.getAllDanhMuc());
-        req.getRequestDispatcher("DanhSachTinTuc.jsp").forward(req, resp);
+
+        String action = req.getParameter("action");
+        if (action == null) action = "list";
+
+        try {
+            switch (action) {
+                case "list": {
+                    // Lấy danh sách tin tức theo danh mục
+                    String madmStr = req.getParameter("madm");
+                    int madm = madmStr != null ? Integer.parseInt(madmStr) : 1;
+                    List<TinTuc> list = dsDAO.getTinTucByDanhMuc(madm);
+                    req.setAttribute("danhSachTinTuc", list);
+                    req.setAttribute("danhMucList", dmDAO.getAll());
+                    req.getRequestDispatcher("DanhSachTinTuc.jsp").forward(req, resp);
+                    break;
+                }
+                case "new": {
+                    req.setAttribute("danhMucList", dsDAO.getAllDanhMuc());
+                    req.getRequestDispatcher("TinTucForm.jsp").forward(req, resp);
+                    break;
+                }
+//                case "edit": {
+//                    int matt = Integer.parseInt(req.getParameter("matt"));
+//                    TinTuc tt = dsDAO.getTinTucById(matt); // bạn cần viết getTinTucById
+//                    req.setAttribute("tinTuc", tt);
+//                    req.setAttribute("danhMucList", dsDAO.getAllDanhMuc());
+//                    req.getRequestDispatcher("TinTucForm.jsp").forward(req, resp);
+//                    break;
+//                }
+                // Thêm các case khác nếu cần (delete, view, ...)
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi xử lý action");
+        }
     }
 }

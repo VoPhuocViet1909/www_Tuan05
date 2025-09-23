@@ -1,5 +1,6 @@
 package iuh.fit.bai06.dao;
 
+import iuh.fit.bai06.model.DanhMuc;
 import iuh.fit.bai06.model.TinTuc;
 import iuh.fit.bai06.util.DBUtil;
 
@@ -66,17 +67,18 @@ public class DanhSachTinTucQuanLy {
     }
 
     // Lấy tất cả danh mục (phục vụ form)
-    public List<Map<String, Object>> getAllDanhMuc() {
-        List<Map<String, Object>> list = new ArrayList<>();
+// Lấy tất cả danh mục
+    public List<DanhMuc> getAllDanhMuc() {
+        List<DanhMuc> list = new ArrayList<>();
         String sql = "SELECT * FROM DANHMUC";
         try (Connection conn = dbUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Map<String, Object> m = new HashMap<>();
-                m.put("maDM", rs.getInt("MADM"));
-                m.put("tenDM", rs.getString("TENDANHMUC"));
-                list.add(m);
+                list.add(new DanhMuc(
+                        rs.getInt("MADM"),
+                        rs.getString("TENDANHMUC")
+                ));
             }
         } catch (Exception e) {
             e.printStackTrace();
