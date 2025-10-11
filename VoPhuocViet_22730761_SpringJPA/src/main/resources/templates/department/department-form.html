@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${department.deptId != null ? 'Edit Department' : 'Add Department'}"></title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1 th:text="${department.deptId != null ? 'Edit Department' : 'Add Department'}"></h1>
+<form th:action="@{${department.deptId} != null ? '/departments/edit/' + ${department.deptId} : '/departments/add'}"
+      th:object="${department}" method="post">
+    <label>ID:</label>
+    <input type="text" th:field="*{deptId}" th:readonly="${department.deptId != null}" required /><br/>
+    <label>Name:</label>
+    <input type="text" th:field="*{deptName}" required /><br/>
+    <button type="submit">Save</button>
+</form>
+
+<!-- Hiển thị danh sách employee nếu đang sửa phòng ban -->
+<div th:if="${department.deptId != null}">
+    <h2>Employees in this Department</h2>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Status</th>
+            <th>Salary</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="emp : ${employees}">
+            <td th:text="${emp.empId}"></td>
+            <td th:text="${emp.empName}"></td>
+            <td th:text="${emp.email}"></td>
+            <td th:text="${emp.age}"></td>
+            <td th:text="${emp.status}"></td>
+            <td th:text="${emp.salary}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<a th:href="@{/departments}">Back to List</a>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Department List</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f6f6;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+        }
+        th, td {
+            padding: 10px 15px;
+            border: 1px solid #bbb;
+            text-align: center;
+        }
+        th {
+            background: #e7e7e7;
+        }
+        a {
+            margin: 0 4px;
+            text-decoration: none;
+            color: #2196f3;
+            font-weight: bold;
+            padding: 5px 12px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #1565c0;
+            background: #bbdefb;
+        }
+        .add-btn {
+            display: inline-block;
+            margin: 10px 0 20px 10%;
+            padding: 7px 16px;
+            background: #2196f3;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .add-btn:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+<h1>Department List</h1>
+<a th:href="@{/departments/add}" class="add-btn">Add Department</a>
+<table>
+    <thead>
+    <tr>
+        <th>Department ID</th>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="dept : ${departments}">
+        <td th:text="${dept.deptId}"></td>
+        <td th:text="${dept.deptName}"></td>
+        <td>
+            <a th:href="@{'/departments/edit/' + ${dept.deptId}}">Edit</a>
+            <a th:href="@{'/departments/delete/' + ${dept.deptId}}"
+               onclick="return confirm('Are you sure?')">Delete</a>
+            <a th:href="@{'/employees?deptId=' + ${dept.deptId}}">List Employees</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

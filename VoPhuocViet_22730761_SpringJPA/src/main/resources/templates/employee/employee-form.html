@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${employee != null ? 'Edit Employee' : 'Add Employee'}"></title>
+    <title th:text="${employee.empId != null ? 'Edit Employee' : 'Add Employee'}"></title>
     <meta charset="UTF-8">
 </head>
 <body>
-<h1 th:text="${employee != null ? 'Edit Employee' : 'Add Employee'}"></h1>
-<form th:action="@{${employee != null ? '/employees/edit/' + ${employee.empId} : '/employees/add'}}"
+<h1 th:text="${employee.empId != null ? 'Edit Employee' : 'Add Employee'}"></h1>
+<form th:action="@{${employee.empId} != null ? '/employees/edit/' + ${employee.empId} : '/employees/add'}"
       th:object="${employee}" method="post">
     <label>ID:</label>
-    <input type="text" th:field="*{empId}" th:readonly="${employee != null}" /><br/>
+    <input type="text" th:field="*{empId}" th:readonly="${employee.empId != null}" /><br/>
     <label>Name:</label>
     <input type="text" th:field="*{empName}" required /><br/>
     <label>Email:</label>
