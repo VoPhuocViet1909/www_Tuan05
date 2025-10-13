@@ -24,9 +24,46 @@ public class EmployeeController {
     private final DepartmentService departmentService;
 
     // Hiển thị danh sách nhân viên
+//    @GetMapping
+//    public String listEmployees(@RequestParam(value = "deptId", required = false) String deptId, Model model) {
+//        List<Employee> employees;
+//        if (deptId != null && !deptId.isEmpty()) {
+//            employees = employeeService.getEmployeesByDepartment(deptId);
+//        } else {
+//            employees = employeeService.getAll();
+//        }
+//        model.addAttribute("employees", employees);
+//        return "employee/employee-list";
+//    }
+//    @GetMapping
+//    public String listEmployees(
+//            @RequestParam(value = "name", required = false) String name,
+//            @RequestParam(value = "age", required = false) Integer age,
+//            @RequestParam(value = "salary", required = false) Double salary,
+//            Model model) {
+//
+//        List<Employee> employees;
+//
+//        if (name != null && !name.isEmpty()) {
+//            employees = employeeService.searchByName(name);
+//        } else if (age != null) {
+//            employees = employeeService.searchByAge(age);
+//        } else if (salary != null) {
+//            employees = employeeService.searchBySalary(salary);
+//        } else {
+//            employees = employeeService.getAll();
+//        }
+//        model.addAttribute("employees", employees);
+//        return "employee/employee-list";
+//    }
     @GetMapping
-    public String listEmployees(Model model) {
-        List<Employee> employees = employeeService.getAll();
+    public String listEmployees(@RequestParam(value = "deptId", required = false) String deptId, Model model) {
+        List<Employee> employees;
+        if (deptId != null && !deptId.isEmpty()) {
+            employees = employeeService.getEmployeesByDepartment(deptId);
+        } else {
+            employees = employeeService.getAll();
+        }
         model.addAttribute("employees", employees);
         return "employee/employee-list";
     }
@@ -94,28 +131,45 @@ public class EmployeeController {
         return employeeService.getEmployeesByDepartment(deptId);
     }
 
-    @GetMapping("/max-salary")
-    public List<Employee> getEmployeesWithMaxSalary() {
-        return employeeService.findEmployeesWithMaxSalary();
+// --- Thống kê/đặc biệt ---
+
+    // Nhân viên lương cao nhất
+    @GetMapping("/max-salary-view")
+    public String maxSalaryView(Model model) {
+        List<Employee> employees = employeeService.findEmployeesWithMaxSalary();
+        model.addAttribute("employees", employees);
+        return "employee/employee-max-salary";
     }
 
-    @GetMapping("/max-age")
-    public List<Employee> getEmployeesWithMaxAge() {
-        return employeeService.findEmployeesWithMaxAge();
+    // Nhân viên lớn tuổi nhất
+    @GetMapping("/max-age-view")
+    public String maxAgeView(Model model) {
+        List<Employee> employees = employeeService.findEmployeesWithMaxAge();
+        model.addAttribute("employees", employees);
+        return "employee/employee-max-age";
     }
 
-    @GetMapping("/stats/departments")
-    public List<AvgSalaryByDeptDTO> getEmployeeStatsByDepartment() {
-        return employeeService.getEmployeeCountAndAvgSalaryByDepartment();
+    // Thống kê số lượng và lương TB theo phòng ban
+    @GetMapping("/stats-department-view")
+    public String statsDepartmentView(Model model) {
+        List<AvgSalaryByDeptDTO> stats = employeeService.getEmployeeCountAndAvgSalaryByDepartment();
+        model.addAttribute("stats", stats);
+        return "employee/employee-stats-department";
     }
 
-    @GetMapping("/stats/status")
-    public List<AvgSalaryByStatusDTO> getEmployeeStatsByStatus() {
-        return employeeService.getEmployeeCountAndAvgSalaryByStatus();
+    // Thống kê số lượng và lương TB theo trạng thái
+    @GetMapping("/stats-status-view")
+    public String statsStatusView(Model model) {
+        List<AvgSalaryByStatusDTO> stats = employeeService.getEmployeeCountAndAvgSalaryByStatus();
+        model.addAttribute("stats", stats);
+        return "employee/employee-stats-status";
     }
 
-    @GetMapping("/sorted/departments")
-    public List<DepartmentWithEmployeesDTO> getEmployeesSortedBySalaryPerDepartment() {
-        return employeeService.getEmployeesSortedBySalaryPerDepartment();
+    // Danh sách nhân viên từng phòng ban, sắp xếp theo lương
+    @GetMapping("/sorted-by-department-view")
+    public String sortedByDepartmentView(Model model) {
+        List<DepartmentWithEmployeesDTO> data = employeeService.getEmployeesSortedBySalaryPerDepartment();
+        model.addAttribute("departments", data);
+        return "employee/employee-sorted-by-department";
     }
 }
