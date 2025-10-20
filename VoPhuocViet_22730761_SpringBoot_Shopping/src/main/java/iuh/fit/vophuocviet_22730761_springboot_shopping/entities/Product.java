@@ -22,6 +22,9 @@ public class Product {
     private BigDecimal price;
     private boolean inStock;
 
+    // Tên file ảnh sẽ lưu ở đây (nullable)
+    private String image;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 

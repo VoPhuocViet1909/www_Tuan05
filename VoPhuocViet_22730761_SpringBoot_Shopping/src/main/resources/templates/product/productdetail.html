@@ -4,33 +4,197 @@
     <meta charset="UTF-8">
     <title>Chi tiết sản phẩm</title>
     <style>
-        .comments {
-            margin-top: 10px;
-            padding-left: 20px;
+        :root{
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --accent: #2aa58a;
+            --muted: #6b7280;
+            --radius: 12px;
+            --max-width: 920px;
         }
+
+        *{box-sizing: border-box; font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+
+        body{
+            margin: 0;
+            padding: 32px 16px;
+            background: linear-gradient(180deg, #f9fbfa 0%, var(--bg) 100%);
+            color: #222;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(18,38,63,0.06);
+            padding: 28px;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            color: var(--accent);
+            font-size: 26px;
+        }
+
+        .meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .meta p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .left {
+            /* thông tin chính */
+        }
+
+        .right {
+            background: #fbfffd;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .product-image {
+            width: 100%;
+            max-height: 420px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #eceff1;
+            background: #fafafa;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .price {
+            display: inline-block;
+            background: linear-gradient(180deg,#ffefdb,#ffd8a6);
+            padding: 8px 12px;
+            color: #8a4b00;
+            font-weight: 700;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 18px;
+        }
+
+        .comments {
+            margin-top: 22px;
+        }
+
         .comment {
-            border-left: 3px solid #2a7;
-            margin-bottom: 8px;
-            padding-left: 10px;
+            background: #f8fbf9;
+            border-left: 3px solid var(--accent);
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            color: #333;
+        }
+
+        .no-comments {
+            color: var(--muted);
             font-style: italic;
+            margin-top: 8px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 18px;
+            text-decoration: none;
+            color: var(--accent);
+            border: 1px solid rgba(42,165,138,0.15);
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background .12s, transform .08s;
+            background: #fff;
+        }
+        .back:hover {
+            background: rgba(42,165,138,0.06);
+            transform: translateY(-2px);
+        }
+
+        /* small helper */
+        .label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .right {
+                order: -1;
+            }
+            .product-image {
+                max-height: 320px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 20px; }
+            .price { font-size: 16px; }
         }
     </style>
 </head>
 <body>
-<h1>Product Detail</h1>
+<div class="container">
+    <h1 th:text="${product.name}">Product Detail</h1>
 
-<p th:text="'Name: ' + ${product.name}"></p>
-<p th:text="'Price: ' + ${product.price} + ' USD'"></p>
-
-<div class="comments">
-    <h3>Comments:</h3>
-    <div th:if="${#lists.isEmpty(product.comments)}">
-        <p><em>No comments yet</em></p>
+    <div class="meta">
+        <p><strong>Category:</strong> <span th:text="${product.category != null ? product.category.name : '—'}"></span></p>
+        <p><strong>Price:</strong> <span class="price" th:text="${product.price} + ' USD'">0 USD</span></p>
     </div>
-    <div th:each="c : ${product.comments}" class="comment">
-        <span th:text="${c.text}">Comment Content</span>
+
+    <div class="layout">
+        <div class="left">
+            <div>
+                <img th:if="${product.image != null}" th:src="@{/uploads/{img}(img=${product.image})}" class="product-image" alt="Product image"/>
+                <div th:if="${product.image == null}" class="product-image" style="display:flex;align-items:center;justify-content:center;color:var(--muted);">
+                    No image
+                </div>
+            </div>
+
+            <div class="comments">
+                <h3>Comments</h3>
+                <div th:if="${#lists.isEmpty(product.comments)}" class="no-comments">
+                    <p><em>No comments yet</em></p>
+                </div>
+                <div th:each="c : ${product.comments}" class="comment">
+                    <span th:text="${c.text}">Comment Content</span>
+                </div>
+            </div>
+
+            <a th:href="@{/product}" class="back">← Back to Product List</a>
+        </div>
+
+        <aside class="right">
+            <div class="label">Thông tin nhanh</div>
+            <p><strong>In stock:</strong> <span th:text="${product.inStock ? 'Yes' : 'No'}">Yes</span></p>
+            <p><strong>Sản phẩm ID:</strong> <span th:text="${product.id}">1</span></p>
+            <p style="margin-top:12px;">
+                <a th:href="@{'/product/edit/' + ${product.id}}" class="back" style="background:var(--accent); color:#fff; border:none;">✏️ Edit</a>
+            </p>
+        </aside>
     </div>
 </div>
-
 </body>
 </html>
