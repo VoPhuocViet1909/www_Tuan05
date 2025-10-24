@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Cart</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f7fafc; color: #222; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        table { width:100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background:#fbfffe; }
+        .actions { margin-top: 12px; display:flex; gap:8px; }
+        a.button { text-decoration:none; padding:6px 10px; background:#2a7; color:#fff; border-radius:6px; }
+        .muted { color:#667085; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Your Cart</h1>
+
+    <div th:if="${#lists.isEmpty(items)}">
+        <p class="muted"><em>Your cart is empty.</em></p>
+        <p><a th:href="@{/product}" class="button">Continue shopping</a></p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(items)}">
+        <table>
+            <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price (USD)</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.product.name}">Product</td>
+                <td th:text="${item.product.price}">0</td>
+                <td th:text="${item.quantity}">1</td>
+                <td th:text="${item.subTotalProduct}">0</td>
+                <td>
+                    <a th:href="@{'/cart/increase/' + ${item.product.id}}" class="button">+</a>
+                    <a th:href="@{'/cart/decrease/' + ${item.product.id}}" class="button">-</a>
+                    <a th:href="@{'/cart/remove/' + ${item.product.id}}" class="button" style="background:#e74c3c;">Remove</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top:12px;">
+            <strong>Total items:</strong> <span th:text="${totalQuantity}">0</span><br/>
+            <strong>Total price:</strong> <span th:text="${total}">0</span> USD
+        </div>
+
+        <div class="actions">
+            <form th:action="@{/cart/clear}" method="post" style="display:inline;">
+                <button type="submit" class="button" style="background:#e74c3c;">Clear cart</button>
+            </form>
+
+            <a th:href="@{/product}" class="button">Continue shopping</a>
+
+            <!-- Thêm hành động checkout nếu bạn muốn -->
+            <!-- <a th:href="@{/checkout}" class="button">Checkout</a> -->
+        </div>
+    </div>
+</div>
+</body>
+</html>
