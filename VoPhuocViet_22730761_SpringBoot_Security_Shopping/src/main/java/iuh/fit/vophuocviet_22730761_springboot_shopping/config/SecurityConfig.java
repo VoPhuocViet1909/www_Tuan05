@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -45,16 +46,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // public resources
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/test").permitAll()
-                        // accessible to both CUSTOMER and ADMIN
-                        .requestMatchers("/product", "/product/detail/**", "/product/{id}", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
-                        // admin-only pages
+
+                        // ADMIN-only - đặt trước để match ưu tiên
                         .requestMatchers("/product/add", "/product/edit/**", "/product/update/**", "/product/delete/**").hasRole("ADMIN")
+                        // nếu muốn chặt hơn: bảo vệ POST edit/add
+                        .requestMatchers(HttpMethod.POST, "/product/add", "/product/edit/**").hasRole("ADMIN")
+
+                        // accessible to both CUSTOMER and ADMIN (viewing)
+                        .requestMatchers("/product", "/product/*", "/product/detail/**", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
+
                         // all other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        // if you have a custom login page uncomment and adapt the next line:
-                        // .loginPage("/login")
                         .defaultSuccessUrl("/product", true)
                         .permitAll()
                 )

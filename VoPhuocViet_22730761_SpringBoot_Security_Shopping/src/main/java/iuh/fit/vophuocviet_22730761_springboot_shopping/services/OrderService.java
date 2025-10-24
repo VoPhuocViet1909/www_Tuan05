@@ -6,4 +6,5 @@ import java.util.List;
 public interface OrderService {
     List<Order> findAll();
     Order findById(int id);
+    Order save(Order order); // added
 }

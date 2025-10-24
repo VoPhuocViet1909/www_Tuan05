@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Product List</title>
@@ -127,7 +127,7 @@
     <h1>List of Products</h1>
 
     <div class="actions">
-        <a th:href="@{/product/add}">+ Add New Product</a>
+        <a th:href="@{/product/add}" sec:authorize="hasRole('ADMIN')">+ Add New Product</a>
     </div>
 
     <div th:if="${#lists.isEmpty(products)}">

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @RequestMapping("/product")
@@ -52,6 +53,7 @@ public class ProductController {
     }
 
     // Form thêm mới
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("product", new Product());
@@ -60,6 +62,7 @@ public class ProductController {
     }
 
     // Xử lý thêm mới (upload ảnh tùy chọn)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public String addProduct(@ModelAttribute("product") Product product,
                              @RequestParam(value = "fileImage", required = false) MultipartFile file) throws IOException {
@@ -85,6 +88,7 @@ public class ProductController {
     }
 
     // Form sửa
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable int id, Model model) {
         Product product = productService.findById(id);
@@ -97,6 +101,7 @@ public class ProductController {
     }
 
     // Xử lý cập nhật (upload ảnh mới thay thế nếu có)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/edit/{id}")
     public String updateProduct(@PathVariable int id,
                                 @ModelAttribute("product") Product product,
@@ -129,6 +134,7 @@ public class ProductController {
     }
 
     // Xóa
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable int id) {
         productService.deleteById(id);
