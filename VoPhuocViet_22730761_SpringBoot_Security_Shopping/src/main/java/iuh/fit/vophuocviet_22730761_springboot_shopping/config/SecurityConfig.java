@@ -40,22 +40,25 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(admin, customer);
     }
 
+    // SecurityConfig.java (chỉ đoạn method securityFilterChain)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         // public resources
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/test").permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/test", "/uploads/**").permitAll()
 
-                        // ADMIN-only - đặt trước để match ưu tiên
+                        // ADMIN-only endpoints (đặt trước để ưu tiên)
                         .requestMatchers("/product/add", "/product/edit/**", "/product/update/**", "/product/delete/**").hasRole("ADMIN")
-                        // nếu muốn chặt hơn: bảo vệ POST edit/add
                         .requestMatchers(HttpMethod.POST, "/product/add", "/product/edit/**").hasRole("ADMIN")
 
-                        // accessible to both CUSTOMER and ADMIN (viewing)
-                        .requestMatchers("/product", "/product/*", "/product/detail/**", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
+                        // Cart: cả CUSTOMER và ADMIN có quyền truy cập các đường dẫn /cart/**
+                        .requestMatchers("/cart/**").hasAnyRole("CUSTOMER", "ADMIN")
 
-                        // all other requests require authentication
+                        // Product viewing: cho cả CUSTOMER và ADMIN
+                        .requestMatchers("/product", "/product/*", "/product/category/**", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
+
+                        // Các request còn lại yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
