@@ -9,4 +9,6 @@ public interface ProductService {
     Product findById(int id);
     Product save(Product product);
     void deleteById(int id);
+
+  //  List<Product> findByNameContaining(String name);
 }

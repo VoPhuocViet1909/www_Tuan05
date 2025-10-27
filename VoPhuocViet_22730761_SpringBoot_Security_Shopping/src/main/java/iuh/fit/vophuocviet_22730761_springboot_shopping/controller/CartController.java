@@ -1,14 +1,23 @@
 package iuh.fit.vophuocviet_22730761_springboot_shopping.controller;
 
+import iuh.fit.vophuocviet_22730761_springboot_shopping.entities.Customer;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.entities.Order;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.entities.OrderLine;
 import iuh.fit.vophuocviet_22730761_springboot_shopping.model.Cart;
 import iuh.fit.vophuocviet_22730761_springboot_shopping.entities.Product;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.model.CartItem;
 import iuh.fit.vophuocviet_22730761_springboot_shopping.services.ProductService;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.services.impl.CustomerServiceImpl;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.services.impl.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +31,8 @@ import org.springframework.http.HttpStatus;
 public class CartController {
 
     private final ProductService productService;
+    private final CustomerServiceImpl customerServiceImpl;
+    private final OrderServiceImpl orderServiceImpl;
 
     @ModelAttribute("cart")
     public Cart createCart() {
@@ -97,4 +108,48 @@ public class CartController {
         cart.clear();
         return "redirect:/cart/view";
     }
+
+    @PostMapping("/checkout")
+    public String checkout(@ModelAttribute("cart") Cart cart) {
+        if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
+            return "redirect:/cart/view";
+        }
+
+        // Lấy username (dùng để lưu tên customer). Nếu null thì dùng "guest".
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = (auth != null && auth.getName() != null) ? auth.getName() : "guest";
+
+        // Tạo customer "cứng" mỗi lần checkout (không tìm kiếm)
+        Customer customer = Customer.builder()
+                .name(username)
+                .customerSince(Calendar.getInstance())
+                .orders(new ArrayList<>())
+                .build();
+        customer = customerServiceImpl.save(customer);
+
+        // Tạo order
+        Order order = Order.builder()
+                .date(Calendar.getInstance())
+                .customer(customer)
+                .orderLines(new ArrayList<>())
+                .build();
+
+        for (CartItem ci : cart.getItems()) {
+            OrderLine line = OrderLine.builder()
+                    .order(order)
+                    .product(ci.getProduct())
+                    .amount(ci.getQuantity())
+                    .purchasePrice(ci.getProduct().getPrice())
+                    .build();
+            order.getOrderLines().add(line);
+        }
+
+        Order saved = orderServiceImpl.save(order);
+
+        // Clear cart (session-scoped)
+        cart.clear();
+
+        return "redirect:/order/" + saved.getId();
+    }
+
 }

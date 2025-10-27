@@ -24,6 +24,34 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
+    // Hiển thị danh sách, có thể lọc theo categoryId và/hoặc q (tìm kiếm)
+//    @GetMapping
+//    public String showAllProducts(@RequestParam(name = "categoryId", required = false) Integer categoryId,
+//                                  @RequestParam(name = "q", required = false) String q,
+//                                  Model model) {
+//        List<Product> products;
+//
+//        if (q != null && !q.isBlank()) {
+//            // tìm bằng repository qua service
+//            products = productService.findByNameContaining(q);
+//            model.addAttribute("q", q);
+//        } else {
+//            products = productService.findAll();
+//        }
+//
+//        // nếu có filter category, lọc tiếp
+//        if (categoryId != null) {
+//            products = products.stream()
+//                    .filter(p -> p.getCategory() != null && Objects.equals(p.getCategory().getId(), categoryId))
+//                    .collect(Collectors.toList());
+//            model.addAttribute("selectedCategoryId", categoryId);
+//        }
+//
+//        model.addAttribute("products", products);
+//        model.addAttribute("categories", categoryService.findAll());
+//        return "product/list";
+//    }
+
     // lấy từ application.properties (mặc định "uploads")
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;

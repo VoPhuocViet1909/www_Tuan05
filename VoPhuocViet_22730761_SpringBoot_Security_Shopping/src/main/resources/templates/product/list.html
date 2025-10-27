@@ -155,8 +155,30 @@
 <div class="container">
     <h1>List of Products</h1>
 
+<!--    &lt;!&ndash; Right-top: Hiển thị user hiện tại và nút logout (chỉ khi đã đăng nhập) &ndash;&gt;-->
+<!--    <div style="position:absolute; top:18px; left:20px;">-->
+<!--        <span sec:authorize="isAuthenticated()" style="margin-right:12px;">-->
+<!--            Xin chào, <strong><span sec:authentication="name"></span></strong>-->
+<!--        </span>-->
+
+<!--        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="display:inline;">-->
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
+<!--            <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">-->
+<!--                Đăng xuất-->
+<!--            </button>-->
+<!--        </form>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Search form: gửi GET /product?q=... (giữ categoryId nếu có) &ndash;&gt;-->
+<!--    <form th:action="@{/product}" method="get" style="margin-bottom:12px; display:flex; gap:8px; align-items:center;">-->
+<!--        <input type="text" name="q" placeholder="Tìm kiếm sản phẩm..." th:value="${q}" style="padding:8px;border-radius:6px;border:1px solid #ddd;"/>-->
+<!--        <input type="hidden" name="categoryId" th:value="${selectedCategoryId}" />-->
+<!--        <button type="submit" style="background:#2a7;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">Tìm</button>-->
+<!--        <a th:href="@{/product}" style="margin-left:6px;text-decoration:none;color:#666;">Reset</a>-->
+<!--    </form>-->
+
     <!-- Cart icon: clickable -> /cart/view; badge initial value from session.cart -->
-    <a th:href="@{/cart/view}" class="cart-icon" title="View cart">
+    <a th:href="@{/cart/view}" class="cart-icon" title="View cart" sec:authorize="hasRole('CUSTOMER')">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.45C7.89 16.37 8 17 8.5 17h9v-2h-8.42c-.14 0-.25-.11-.25-.25L11 13h6.55c.75 0 1.41-.41 1.75-1.03l3.58-6.49L21 3H6.21" fill="#2a7"/>
         </svg>
