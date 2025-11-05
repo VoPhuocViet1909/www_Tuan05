@@ -27,14 +27,11 @@ public class Clazz {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank (message = "Tên không được để trống")
     private String name;
 
-    @PastOrPresent(message = " ngày bắt đầu phải sau ngày hiện tại")
-    @Temporal(TemporalType.DATE)
     private LocalDate startDate;
 
-    @PositiveOrZero(message = "số lượng phải lớn hơn 0")
+
     private Integer quantity;
 
     @ManyToOne
@@ -49,27 +46,27 @@ public class Clazz {
         this.id = id;
     }
 
-    public @NotBlank(message = "Tên không được để trống") String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotBlank(message = "Tên không được để trống") String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public @PastOrPresent(message = " ngày bắt đầu phải sau ngày hiện tại") LocalDate getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@PastOrPresent(message = " ngày bắt đầu phải sau ngày hiện tại") LocalDate startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public @PositiveOrZero(message = "số lượng phải lớn hơn 0") Integer getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(@PositiveOrZero(message = "số lượng phải lớn hơn 0") Integer quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

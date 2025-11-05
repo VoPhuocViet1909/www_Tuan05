@@ -1,29 +1,27 @@
 <h1>Danh sach lop hoc</h1>
-<!--<form th:action="@{/clazzes/filter-by-month}" method="get" >-->
-<!--    -->
-<!--</form>-->
 
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
-        <tr>
-            <th>Id: </th>
-            <th>Ten lop: </th>
-            <th>Ngay bat dau: </th>
-            <th>So luong: </th>
-            <th>Ten giang vien: </th>
-            <th>Chi tiet: </th>
-        </tr>
+    <tr>
+        <th>Id: </th>
+        <th>Ten lop: </th>
+        <th>Ngay bat dau: </th>
+        <th>So luong: </th>
+        <th>Ten giang vien: </th>
+        <th>Chi tiet: </th>
+    </tr>
     </thead>
     <tbody>
-       <tr th:each="clazz:${clazzes}">
-           <td th:text="${clazz.id}"></td>
-           <td th:text="${clazz.name}"></td>
-           <td th:text="${#temporals.format(clazz.startDate, 'dd/MM/yyyy')}"></td>
-           <td th:text="${clazz.quantity}"></td>
-           <td th:text="${clazz.teacherId!=null?clazz.teacherId.name:'N/A' }"></td>
-           <td>
-               xem
-           </td>
-       </tr>
+    <tr th:each="clazz:${clazzes}">
+        <td th:text="${clazz.id}"></td>
+        <td th:text="${clazz.name}"></td>
+        <td th:text="${clazz.startDate}"></td>
+        <td th:text="${clazz.startDate != null ? #temporals.format(clazz.startDate, 'dd/MM/yyyy') : 'N/A'}"></td>
+        <td th:text="${clazz.quantity}"></td>
+        <td th:text="${clazz.teacherId!=null?clazz.teacherId.name:'N/A' }"></td>
+        <td>
+            xem
+        </td>
+    </tr>
     </tbody>
 </table>
