@@ -85,6 +85,20 @@
             color: #667;
         }
 
+        /* ✅ Style cho lỗi validation */
+        .error {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        input.error-input,
+        select.error-input {
+            border-color: var(--danger);
+            background-color: #fff5f5;
+        }
+
         .checkbox-wrap {
             display:flex;
             align-items:center;
@@ -97,7 +111,6 @@
             accent-color: var(--accent);
         }
 
-        /* Image section */
         .image-block {
             display: flex;
             gap: 12px;
@@ -135,7 +148,6 @@
             color: #8b93a0;
         }
 
-        /* Actions */
         .actions {
             display:flex;
             justify-content: flex-end;
@@ -166,7 +178,6 @@
         }
         button.update:hover { transform: translateY(-2px); }
 
-        /* Responsive */
         @media (max-width: 760px) {
             form { grid-template-columns: 1fr; }
             .current-image, .preview-image { width: 120px; height: 90px; }
@@ -179,21 +190,30 @@
     <h1>Edit Product</h1>
 
     <form th:action="@{'/product/edit/' + ${product.id}}" th:object="${product}" method="post" enctype="multipart/form-data">
+
+        <!-- ID (readonly) -->
         <div class="full">
             <label>ID:</label>
             <input type="text" th:field="*{id}" readonly/>
         </div>
 
+        <!-- Name -->
         <div>
-            <label>Name:</label>
-            <input type="text" th:field="*{name}" required/>
+            <label>Name: <span style="color:red;">*</span></label>
+            <input type="text" th:field="*{name}"
+                   th:classappend="${#fields.hasErrors('name')} ? 'error-input' : ''"/>
+            <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         </div>
 
+        <!-- Price -->
         <div>
-            <label>Price (USD):</label>
-            <input type="number" step="0.01" th:field="*{price}" required/>
+            <label>Price (USD): <span style="color:red;">*</span></label>
+            <input type="number" step="0.01" th:field="*{price}"
+                   th:classappend="${#fields.hasErrors('price')} ? 'error-input' : ''"/>
+            <span class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
         </div>
 
+        <!-- In Stock -->
         <div>
             <label>In Stock:</label>
             <div class="checkbox-wrap">
@@ -202,6 +222,7 @@
             </div>
         </div>
 
+        <!-- Category -->
         <div class="full">
             <label>Category:</label>
             <select th:field="*{category.id}">
@@ -211,6 +232,7 @@
             </select>
         </div>
 
+        <!-- Image -->
         <div class="full">
             <label>Ảnh hiện tại và Preview ảnh mới:</label>
             <div class="image-block">
@@ -238,7 +260,6 @@
 </div>
 
 <script>
-    // Preview ảnh trước khi submit
     const fileInput = document.getElementById('fileImage');
     const preview = document.getElementById('preview');
 

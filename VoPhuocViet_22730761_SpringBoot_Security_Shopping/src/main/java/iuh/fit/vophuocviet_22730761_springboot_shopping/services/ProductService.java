@@ -10,5 +10,6 @@ public interface ProductService {
     Product save(Product product);
     void deleteById(int id);
 
-  //  List<Product> findByNameContaining(String name);
+    // Tìm sản phẩm theo tên (chứa, không phân biệt hoa thường)
+    List<Product> findByNameContaining(String name);
 }

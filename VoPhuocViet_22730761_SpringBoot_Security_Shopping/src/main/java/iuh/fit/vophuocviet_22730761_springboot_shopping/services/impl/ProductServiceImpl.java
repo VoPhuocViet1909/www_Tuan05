@@ -36,11 +36,11 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
-//    @Override
-//    public List<Product> findByNameContaining(String name) {
-//        if (name == null || name.isBlank()) {
-//            return productRepository.findAll();
-//        }
-//        return productRepository.findByNameContainingIgnoreCase(name);
-//    }
+    @Override
+    public List<Product> findByNameContaining(String name) {
+        if (name == null || name.isBlank()) {
+            return productRepository.findAll();
+        }
+        return productRepository.findByNameContainingIgnoreCase(name);
+    }
 }

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Trợ lý thông minh</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* =========================
+           GLOBAL - NỀN SÁNG, TONE XANH #468BDA
+        ========================== */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 30px 0;
+            background: radial-gradient(circle at top, #ffffff 0%, #f3f7ff 45%, #e4f0ff 100%);
+            color: #212529;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================== */
+        .main-container {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 18px 40px rgba(148, 163, 184, 0.45);
+            padding: 32px 32px 40px;
+            margin: 30px auto;
+            max-width: 1100px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .main-container::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(70, 139, 218, 0.35), rgba(160, 199, 255, 0.35));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* =========================
+           NAV BACK BUTTON
+        ========================== */
+        .nav-back {
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            border-radius: 999px;
+            border: 1px solid #468BDA;
+            color: #468BDA;
+            background: #ffffff;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back i {
+            font-size: 0.8rem;
+        }
+
+        .btn-back:hover {
+            background: #468BDA;
+            border-color: #468BDA;
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(70, 139, 218, 0.45);
+        }
+
+        /* =========================
+           PAGE HEADER
+        ========================== */
+        .page-header {
+            background: linear-gradient(135deg, #468BDA 0%, #3871b1 100%);
+            color: white;
+            padding: 20px 24px 18px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 30px rgba(70, 139, 218, 0.7);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(248, 250, 252, 0.3), transparent 60%);
+            top: -70px;
+            right: -60px;
+            opacity: 0.5;
+        }
+
+        .page-header h1 {
+            margin: 0 0 4px 0;
+            font-weight: 700;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header h1 i {
+            font-size: 1.9rem;
+        }
+
+        .page-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =========================
+           CARD (CHAT)
+        ========================== */
+        .card {
+            border-radius: 20px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 24px rgba(148, 163, 184, 0.35);
+            overflow: hidden;
+        }
+
+        .card-header {
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
+        .card-header h5 {
+            font-weight: 600;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h5 i {
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            background: #f8fafc;
+        }
+
+        .card-footer {
+            border-top: 1px solid #e2e8f0 !important;
+            background: #ffffff;
+        }
+
+        /* =========================
+           CHAT CONTAINER
+        ========================== */
+        .chat-container {
+            background: #f8fafc;
+            border-radius: 0 0 18px 18px;
+            padding: 16px 16px 14px;
+            height: 420px;
+            overflow-y: auto;
+            border-top: 1px solid #e2e8f0;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        /* =========================
+           CHAT MESSAGE BUBBLES
+        ========================== */
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            max-width: 78%;
+            animation: slideIn 0.25s ease;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            position: relative;
+        }
+
+        .chat-message i {
+            opacity: 0.85;
+        }
+
+        .ai-message {
+            background: #ffffff;
+            color: #111827;
+            margin-right: auto;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 6px 14px rgba(148, 163, 184, 0.35);
+        }
+
+        .ai-message::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            bottom: 8px;
+            width: 10px;
+            height: 10px;
+            background: inherit;
+            transform: rotate(45deg);
+            border-left: inherit;
+            border-bottom: inherit;
+            border-radius: 0 0 0 4px;
+        }
+
+        .user-message {
+            margin-left: auto;
+            text-align: right;
+            background: #468BDA;
+            color: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 8px 18px rgba(70, 139, 218, 0.6);
+        }
+
+        .user-message::before {
+            content: "";
+            position: absolute;
+            right: -6px;
+            bottom: 8px;
+            width: 10px;
+            height: 10px;
+            background: inherit;
+            transform: rotate(45deg);
+            border-radius: 0 0 4px 0;
+        }
+
+        .ai-message ul {
+            padding-left: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        .ai-message li {
+            margin-bottom: 4px;
+        }
+
+        /* =========================
+           CHAT INPUT
+        ========================== */
+        .chat-input-container {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 10px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 999px;
+            border: 1px solid #cbd5e1;
+            padding: 11px 16px;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #468BDA;
+            box-shadow: 0 0 0 1px rgba(70, 139, 218, 0.6);
+            background: #ffffff;
+            color: #111827;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================== */
+        .btn-ai {
+            background: #468BDA;
+            border: none;
+            color: white;
+            padding: 11px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-ai i {
+            font-size: 0.9rem;
+        }
+
+        .btn-ai:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(70, 139, 218, 0.6);
+            color: #f9fafb;
+            background: #3871b1;
+        }
+
+        .btn-ai:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(148, 163, 184, 0.8);
+        }
+
+        /* =========================
+           LOADING SPINNER
+        ========================== */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 12px 0 14px;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .spinner-border {
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+
+        .loading-spinner p {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .spinner-border {
+            color: #468BDA;
+        }
+
+        /* =========================
+           ANIMATIONS
+        ========================== */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+        @media (max-width: 992px) {
+            .main-container {
+                padding: 22px 18px 26px;
+            }
+
+            .page-header {
+                padding: 18px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .page-header h1 i {
+                font-size: 1.6rem;
+            }
+
+            .chat-container {
+                height: 360px;
+            }
+
+            .chat-message {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .btn-ai {
+                padding: 10px 18px;
+            }
+
+            .form-control {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<!-- Container chính -->
+<div class="container">
+    <div class="main-container">
+        <!-- Nút quay lại -->
+        <div class="nav-back">
+            <a href="/products/view" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách sản phẩm
+            </a>
+        </div>
+
+        <!-- Header trang -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-robot"></i>
+                AI Assistant - Trợ lý thông minh
+            </h1>
+            <p class="mb-0">Sử dụng trí tuệ nhân tạo để hỗ trợ công việc của bạn trong quản lý và bán hàng sản phẩm.</p>
+        </div>
+
+        <div class="row">
+            <!-- Cột bên trái - Chat với AI -->
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header"
+                         style="background: linear-gradient(135deg, #468BDA 0%, #3871b1 100%); color: white;">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments"></i>
+                            Trò chuyện với AI
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Chat container để hiển thị cuộc trò chuyện -->
+                        <div class="chat-container" id="chatContainer">
+                            <!-- Welcome message -->
+                            <div class="chat-message ai-message">
+                                <i class="fas fa-robot me-2"></i>
+                                Xin chào! Tôi là AI Assistant. Tôi có thể giúp bạn:
+                                <ul class="mt-2 mb-0">
+                                    <li>Trả lời câu hỏi về sản phẩm</li>
+                                    <li>Tạo mô tả sản phẩm hấp dẫn</li>
+                                    <li>Phân tích dữ liệu bán hàng</li>
+                                    <li>Tạo slogan sáng tạo cho sản phẩm</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Loading spinner -->
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Đang xử lý...</span>
+                            </div>
+                            <p class="mt-2">AI đang suy nghĩ...</p>
+                        </div>
+                    </div>
+
+                    <!-- Chat input -->
+                    <div class="card-footer">
+                        <div class="chat-input-container">
+                            <div class="input-group gap-2">
+                                <input type="text" class="form-control" id="chatInput"
+                                       placeholder="Nhập câu hỏi của bạn (ví dụ: Hãy gợi ý mô tả cho sản phẩm X)..."
+                                       onkeypress="handleChatKeyPress(event)">
+                                <button class="btn btn-ai" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i> Gửi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Nếu sau này bạn muốn thêm cột tool bên phải, chỉ cần thêm col-lg-4 ở đây -->
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // JavaScript để xử lý tương tác với AI
+
+    /**
+     * Xử lý sự kiện nhấn Enter trong ô chat
+     */
+    function handleChatKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    /**
+     * Gửi tin nhắn đến AI
+     */
+    async function sendMessage() {
+        const chatInput = document.getElementById('chatInput');
+        const message = chatInput.value.trim();
+
+        if (!message) {
+            alert('Vui lòng nhập câu hỏi!');
+            return;
+        }
+
+        // Hiển thị tin nhắn của user
+        addChatMessage(message, 'user');
+
+        // Clear input
+        chatInput.value = '';
+
+        // Hiển thị loading
+        showLoading(true);
+
+        try {
+            // Gửi request đến API
+            const response = await fetch('http://localhost:8080/ai/chat/' + encodeURIComponent(message));
+
+            const data = await response.text();
+
+            addChatMessage(data, 'ai');
+
+        } catch (error) {
+            console.error('Error:', error);
+            addChatMessage('Xin lỗi, đã xảy ra lỗi khi kết nối đến AI.', 'ai');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    /**
+     * Thêm tin nhắn vào chat container
+     */
+    function addChatMessage(message, type) {
+        const chatContainer = document.getElementById('chatContainer');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${type}-message`;
+
+        if (type === 'ai') {
+            messageDiv.innerHTML = `<i class="fas fa-robot me-2"></i>${message}`;
+        } else {
+            messageDiv.innerHTML = `<i class="fas fa-user me-2"></i>${message}`;
+        }
+
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    /**
+     * Hiển thị/ẩn loading spinner
+     */
+    function showLoading(show) {
+        const spinner = document.getElementById('loadingSpinner');
+        spinner.style.display = show ? 'block' : 'none';
+    }
+
+    /**
+     * Tạo mô tả sản phẩm
+     */
+    async function generateDescription() {
+        const productName = document.getElementById('productNameDesc')?.value.trim();
+        const categoryName = document.getElementById('categoryNameDesc')?.value.trim();
+
+        if (!productName || !categoryName) {
+            alert('Vui lòng nhập đầy đủ tên sản phẩm và danh mục!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/ai/generate-description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productName: productName,
+                    categoryName: categoryName
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('Lỗi: ' + data.error);
+            } else {
+                document.getElementById('descriptionText').textContent = data.description;
+                document.getElementById('descriptionResult').style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Đã xảy ra lỗi khi tạo mô tả sản phẩm.');
+        }
+    }
+
+    /**
+     * Tạo slogan sản phẩm
+     */
+    async function generateSlogan() {
+        const productName = document.getElementById('productNameSlogan')?.value.trim();
+        const productFeatures = document.getElementById('productFeatures')?.value.trim() || '';
+
+        if (!productName) {
+            alert('Vui lòng nhập tên sản phẩm!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/ai/generate-slogan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productName: productName,
+                    productFeatures: productFeatures
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('Lỗi: ' + data.error);
+            } else {
+                const formattedSlogans = data.slogans.replace(/\n/g, '<br>');
+                document.getElementById('sloganText').innerHTML = formattedSlogans;
+                document.getElementById('sloganResult').style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Đã xảy ra lỗi khi tạo slogan.');
+        }
+    }
+
+    /**
+     * Phân tích dữ liệu bán hàng
+     */
+    async function analyzeSales() {
+        const salesData = document.getElementById('salesData')?.value.trim();
+
+        if (!salesData) {
+            alert('Vui lòng nhập dữ liệu bán hàng!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/ai/analyze-sales', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    salesData: salesData
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('Lỗi: ' + data.error);
+            } else {
+                const formattedAnalysis = data.analysis.replace(/\n/g, '<br>');
+                document.getElementById('analysisText').innerHTML = formattedAnalysis;
+                document.getElementById('analysisResult').style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Đã xảy ra lỗi khi phân tích dữ liệu.');
+        }
+    }
+</script>
+</body>
+
+</html>
