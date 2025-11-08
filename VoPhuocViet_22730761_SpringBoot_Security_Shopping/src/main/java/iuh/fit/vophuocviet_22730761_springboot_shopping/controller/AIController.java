@@ -1,11 +1,12 @@
 package iuh.fit.vophuocviet_22730761_springboot_shopping.controller;
 
+import iuh.fit.vophuocviet_22730761_springboot_shopping.services.AIService;
+import iuh.fit.vophuocviet_22730761_springboot_shopping.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 
 @Controller
 @RequestMapping("/ai")

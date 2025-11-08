@@ -55,6 +55,9 @@ public class SecurityConfig {
                         // Cart: cả CUSTOMER và ADMIN có quyền truy cập các đường dẫn /cart/**
                         .requestMatchers("/cart/**").hasAnyRole("CUSTOMER", "ADMIN")
 
+                        // AI Assistant: cho cả CUSTOMER và ADMIN
+                        .requestMatchers("/ai/**").hasAnyRole("CUSTOMER", "ADMIN")
+
                         // Product viewing: cho cả CUSTOMER và ADMIN
                         .requestMatchers("/product", "/product/*", "/product/category/**", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
 
