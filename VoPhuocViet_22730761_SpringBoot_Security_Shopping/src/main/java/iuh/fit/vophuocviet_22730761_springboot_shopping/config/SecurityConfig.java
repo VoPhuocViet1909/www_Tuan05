@@ -45,20 +45,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // public resources
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/test", "/uploads/**").permitAll()
-
-                        // ADMIN-only endpoints (đặt trước để ưu tiên)
                         .requestMatchers("/product/add", "/product/edit/**", "/product/update/**", "/product/delete/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/product/add", "/product/edit/**").hasRole("ADMIN")
-
-                        // Cart: cả CUSTOMER và ADMIN có quyền truy cập các đường dẫn /cart/**
                         .requestMatchers("/cart/**").hasAnyRole("CUSTOMER", "ADMIN")
-
-                        // Product viewing: cho cả CUSTOMER và ADMIN
+                        .requestMatchers("/ai/**").hasAnyRole("CUSTOMER", "ADMIN")  // ✅ THÊM DÒNG NÀY
                         .requestMatchers("/product", "/product/*", "/product/category/**", "/home", "/").hasAnyRole("CUSTOMER", "ADMIN")
-
-                        // Các request còn lại yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
