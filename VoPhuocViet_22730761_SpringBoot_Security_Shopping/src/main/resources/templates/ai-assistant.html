@@ -530,8 +530,8 @@
 
         try {
             // Gửi request đến API
-            const response = await fetch('http://localhost:8080/ai/chat/' + encodeURIComponent(message));
-
+            // const response = await fetch('http://localhost:8085/ai/chat/' + encodeURIComponent(message));
+            const response = await fetch('/ai/chat/' + encodeURIComponent(message));
             const data = await response.text();
 
             addChatMessage(data, 'ai');
